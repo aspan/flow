@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import { resolve, relative } from 'node:path';
-import type { RolldownOutput } from 'rolldown';
+import type { RollupOutput } from 'rollup';
 import { build, InlineConfig, Plugin } from 'vite';
 import { getManifest, ManifestTransform } from 'workbox-build';
 // @ts-ignore
@@ -45,7 +45,7 @@ function injectManifestToSWPlugin({ outDir }: { outDir: string }): Plugin {
  */
 export default function serviceWorkerPlugin({ srcPath }: { srcPath: string }): Plugin {
   let buildConfig: InlineConfig;
-  let buildOutput: RolldownOutput;
+  let buildOutput: RollupOutput;
   let swSourcePath = resolve(srcPath);
 
   return {
@@ -70,7 +70,7 @@ export default function serviceWorkerPlugin({ srcPath }: { srcPath: string }): P
           sourcemap: viteConfig.command === 'serve' || viteConfig.build.sourcemap,
           emptyOutDir: false,
           modulePreload: false,
-          rolldownOptions: {
+          rollupOptions: {
             input: {
               sw: swSourcePath
             },
@@ -86,7 +86,7 @@ export default function serviceWorkerPlugin({ srcPath }: { srcPath: string }): P
     },
     async buildStart() {
       if (buildConfig.mode === 'development') {
-        buildOutput = (await build(buildConfig)) as RolldownOutput;
+        buildOutput = (await build(buildConfig)) as RollupOutput;
       }
     },
     resolveId(id) {
@@ -122,7 +122,7 @@ export default function serviceWorkerPlugin({ srcPath }: { srcPath: string }): P
       }
 
       try {
-        buildOutput = (await build(buildConfig)) as RolldownOutput;
+        buildOutput = (await build(buildConfig)) as RollupOutput;
         const mg = this.environment.moduleGraph;
         if (!mg) {
           return;
